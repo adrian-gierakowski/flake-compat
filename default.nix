@@ -5,13 +5,17 @@
 # containing 'defaultNix' (to be used in 'default.nix'), 'shellNix'
 # (to be used in 'shell.nix').
 
-{ src, system ? builtins.currentSystem or "unknown-system" }:
+{
+  src,
+  system ? builtins.currentSystem or "unknown-system",
+  lockFileProcessorFunc ? _: _,
+}:
 
 let
 
   lockFilePath = src + "/flake.lock";
 
-  lockFile = builtins.fromJSON (builtins.readFile lockFilePath);
+  lockFile = lockFileProcessorFunc (builtins.fromJSON (builtins.readFile lockFilePath));
 
   fetchTree =
     info:
